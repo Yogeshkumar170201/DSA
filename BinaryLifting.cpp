@@ -4,6 +4,7 @@ using namespace std;
 
 vector<int>tin, tout;
 int timer;
+vector<int>lev;
 
 void dfs(int u, int p, vector<vector<int>>&lookup, int si, vector<vector<int>>&g){
     tin[u] = ++timer;
@@ -13,6 +14,7 @@ void dfs(int u, int p, vector<vector<int>>&lookup, int si, vector<vector<int>>&g
     }
     for(auto v:g[u]){
         if(v!=p){
+            lev[v] = lev[u]+1;
             dfs(v, u, lookup, si, g);
         }
     }
@@ -41,10 +43,11 @@ int lca(int u, int v, int si, vector<vector<int>>&lookup){
     return lookup[u][0];
 }
 
+
 int main() {
     int n = 7;
     vector<vector<int>>edges = {{1,2},{1,3},{1,4},{2,5},{2,6},{4,7}};
-    vector<vector<int>>queries = {{3,7}, {6,4}, {6,2}};
+    vector<vector<int>>queries = {{3,7}, {6,4}, {6,2}, {1,6}};
     vector<vector<int>>g(n+1);
     for(auto i:edges){
         g[i[0]].push_back(i[1]);
@@ -52,6 +55,7 @@ int main() {
     }
     tin.resize(n+1, 0);
     tout.resize(n+1, 0);
+    lev.resize(n+1, 0);
     timer = 0;
     int si = floor(log2(n))+1;
     vector<vector<int>>lookup(n+1, vector<int>(si, -1));
@@ -60,7 +64,8 @@ int main() {
     for(auto i:queries){
         int u = i[0];
         int v = i[1];
-        cout<<lca(u, v, si, lookup)<<endl;
+        int lc = lca(u, v, si, lookup);
+        cout<<lev[u]-lev[lc]+lev[v]-lev[lc]<<endl;
     }
     return 0;
 }
